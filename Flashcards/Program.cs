@@ -1,6 +1,7 @@
 ﻿using Flashcards;
 
-var databaseController = new DatabaseController();
-databaseController.CreateDatabase();
-databaseController.DeleteStack();
-Console.WriteLine("Db created");
+var databaseCreation = new DatabaseCreation();
+var stackMenu = new StackMenuManager();
+
+databaseCreation.CreateDatabase();
+stackMenu.StackMenu();
