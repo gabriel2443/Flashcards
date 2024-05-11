@@ -15,19 +15,19 @@ namespace Flashcards
                 connection.Open();
                 var createStackTable = @"IF NOT EXISTS(SELECT * FROM sys.tables WHERE name= 'Cardstack')
                                     CREATE TABLE Cardstack(
-                                    cardstack_id INT PRIMARY KEY IDENTITY NOT NULL,
-                                    name NVARCHAR(50) NOT NULL UNIQUE
+                                    CardstackId INT PRIMARY KEY IDENTITY NOT NULL,
+                                    CardstackName NVARCHAR(50) NOT NULL UNIQUE
                                     )";
                 connection.Execute(createStackTable);
 
                 var createFlashcards = @"IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'Flashcards')
                                    CREATE TABLE Flashcards(
-                                   flashcard_id INT PRIMARY KEY IDENTITY NOT NULL,
-                                   question NVARCHAR(100) NOT NULL,
-                                   answer NVARCHAR(100) NOT NULL,
-                                   stack_id INT NOT NULL,
-                                   CONSTRAINT fk_cardstack FOREIGN KEY(stack_id)
-                                   REFERENCES Cardstack(cardstack_id)
+                                   FlashcardId INT PRIMARY KEY IDENTITY NOT NULL,
+                                   Question NVARCHAR(100) NOT NULL,
+                                   Answer NVARCHAR(100) NOT NULL,
+                                   StackId INT NOT NULL,
+                                   CONSTRAINT fk_cardstack FOREIGN KEY(StackId)
+                                   REFERENCES Cardstack(CardstackId)
                                    ON DELETE CASCADE
                                    ON UPDATE CASCADE
                                    )";

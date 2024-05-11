@@ -2,11 +2,11 @@
 
 internal class CardStack
 {
-    public int Id { get; set; }
-    public string StackName { get; set; }
+    public int CardstackId { get; set; }
+    public string CardstackName { get; set; }
 }
 
-internal class StackDTO
+internal class CardstackDTO
 {
-    public string Name { get; set; }
+    public string CardstackName { get; set; }
 }
