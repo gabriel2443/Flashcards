@@ -1,7 +1,8 @@
 ﻿using Flashcards;
+using Flashcards.Database;
 
 var databaseCreation = new DatabaseCreation();
-var stackMenu = new StackMenuManager();
+var mainMenu = new MainMenuUI();
 
 databaseCreation.CreateDatabase();
-stackMenu.StackMenu();
+mainMenu.MainMenu();

@@ -1,8 +1,9 @@
-﻿using Flashcards.Models;
+﻿using Flashcards.Database;
+using Flashcards.Models;
 
 namespace Flashcards
 {
-    internal class StackMenuManager
+    internal class StackMenuUI
     {
         private StackDatabaseManager stackDatabaseManager = new();
 
@@ -12,11 +13,13 @@ namespace Flashcards
 
             while (isRunning)
             {
-                Console.WriteLine("\n\nMAIN MENU");
+                Console.WriteLine("\n\nSTACKS MENU");
                 Console.WriteLine("\nWhat would you like to do?");
                 Console.WriteLine("\nType 0 to Close Application.");
                 Console.WriteLine("Type 1 Add a stack");
                 Console.WriteLine("Type 2 to view stacks");
+                Console.WriteLine("Type 3 to delete stacks");
+                Console.WriteLine("Type 4 to update stacks");
 
                 var userInput = Console.ReadLine();
 
@@ -37,6 +40,10 @@ namespace Flashcards
 
                     case "3":
                         DeleteStack();
+                        break;
+
+                    case "4":
+                        UpdateStack();
                         break;
                 }
             }
@@ -63,13 +70,42 @@ namespace Flashcards
                 Console.WriteLine("List of stacks:");
                 foreach (var card in cardStacks)
                 {
-                    Console.WriteLine($"Id: {card.CardstackId}, Stack Name: {card.CardstackName}");
+                    Console.WriteLine($"Stack Number: {card.CardstackId}, Stack Name: {card.CardstackName}");
                 }
             }
             else
             {
                 Console.WriteLine("No stacks found.");
             }
+        }
+
+        private void UpdateStack()
+        {
+            var cardStack = new CardStack();
+            ReadStack();
+
+            Console.WriteLine("Please enter the number of the stack you want to edit");
+            var inputId = Console.ReadLine();
+
+            while (!Int32.TryParse(inputId, out _) || Convert.ToInt32(inputId) < 0)
+            {
+                Console.WriteLine("Please enter a valid number");
+
+                inputId = Console.ReadLine();
+            }
+
+            cardStack.CardstackId = Convert.ToInt32(inputId);
+
+            Console.WriteLine("Please enter the updated name for the stack");
+            var inputName = Console.ReadLine();
+            while (string.IsNullOrEmpty(inputName))
+            {
+                Console.WriteLine("Please enter a valid name");
+                inputName = Console.ReadLine();
+            }
+            cardStack.CardstackName = inputName;
+
+            stackDatabaseManager.UpdateStack(cardStack);
         }
 
         private void DeleteStack()

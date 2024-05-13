@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Configuration;
 
-namespace Flashcards
+namespace Flashcards.Database
 {
     internal class DatabaseCreation
     {

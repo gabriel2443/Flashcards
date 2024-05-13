@@ -3,7 +3,7 @@ using Flashcards.Models;
 using Microsoft.Data.SqlClient;
 using System.Configuration;
 
-namespace Flashcards;
+namespace Flashcards.Database;
 
 public class StackDatabaseManager
 {
@@ -29,11 +29,22 @@ public class StackDatabaseManager
         }
     }
 
+    internal void UpdateStack(CardStack cardStack)
+    {
+        using (var connection = new SqlConnection(connectionStr))
+        {
+            var sql = $@"UPDATE Cardstack SET CardstackName = '{cardStack.CardstackName}' WHERE CardstackId = {cardStack.CardstackId}";
+
+            connection.Execute(sql, cardStack);
+        }
+    }
+
     internal void DeleteStack(CardStack cardStack)
     {
         using (var connection = new SqlConnection(connectionStr))
         {
             var sql = $@"DELETE FROM Cardstack WHERE CardstackId = {cardStack.CardstackId} ";
+            if (cardStack.CardstackId == 0) Console.WriteLine("stack number does not exist");
             connection.Execute(sql);
         }
     }
