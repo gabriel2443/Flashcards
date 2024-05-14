@@ -6,6 +6,7 @@ namespace Flashcards
     internal class FlashcardsMenuUI
     {
         private FlashcardDatabaseManager flashcardDatabaseManager = new FlashcardDatabaseManager();
+        private StackDatabaseManager stackDatabaseManager = new StackDatabaseManager();
 
         internal void FlashCardsMenu()
         {
@@ -25,23 +26,58 @@ namespace Flashcards
                     case "1":
                         AddFlashcard();
                         break;
+
+                    case "2":
+                        GetFlashcards();
+                        break;
                 }
             }
         }
 
         internal void AddFlashcard()
         {
-            var cardStack = new CardStack();
+            var getStacks = new StackDatabaseManager();
+            var stacksMenu = new StackMenuUI();
+            stacksMenu.ReadStack();
+
+            Console.WriteLine("Please select the number of the stack you want to add a flashcard");
+            var stackNum = ValidateNumber.ValidateNum("Invalid input");
+
+            var stackId = getStacks.GetStackById(Convert.ToInt32(stackNum));
+            while (stackId == null || stackId.CardstackId != Convert.ToInt32(stackNum))
+            {
+                Console.WriteLine("stack number does not exist");
+                stackNum = Console.ReadLine();
+                stackId = getStacks.GetStackById(Convert.ToInt32(stackNum));
+            }
             var flashcards = new FlashCards();
-            Console.WriteLine("Please enter a the frond of the card");
+            Console.WriteLine("Please enter the front of the card");
             var inputFront = Console.ReadLine();
             flashcards.Question = inputFront;
             Console.WriteLine("Please enter the back of the card");
             var inputBack = Console.ReadLine();
             flashcards.Answer = inputBack;
-            flashcards.StackId = cardStack.CardstackId;
+
+            flashcards.CardstackId = stackId.CardstackId;
 
             flashcardDatabaseManager.AddFlashard(flashcards);
+        }
+
+        internal void GetFlashcards()
+        {
+            Console.Clear();
+
+            var flashcards = flashcardDatabaseManager.ReadFlahcards();
+
+            if (flashcards.Any())
+            {
+                Console.WriteLine("List of stacks:");
+                foreach (var flashcard in flashcards)
+                {
+                    Console.WriteLine($"{flashcard.FlashcardId}|| Question:{flashcard.Question} | Answer:{flashcard.Answer} stack: ");
+                }
+            }
+            else { Console.WriteLine("No flashcards found"); };
         }
     }
 }

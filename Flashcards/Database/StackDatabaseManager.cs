@@ -9,7 +9,7 @@ public class StackDatabaseManager
 {
     private string connectionStr = ConfigurationManager.AppSettings.Get("ConnectionString");
 
-    internal void InsertStack(CardstackDTO stack)
+    internal void InsertStack(CardStack stack)
     {
         using (var connection = new SqlConnection(connectionStr))
         {
@@ -24,8 +24,19 @@ public class StackDatabaseManager
         using (var connection = new SqlConnection(connectionStr))
         {
             var sql = @"SELECT * FROM Cardstack";
+
             var readStacks = connection.Query<CardStack>(sql).ToList();
             return readStacks;
+        }
+    }
+
+    internal CardStack GetStackById(int cardStackId)
+    {
+        var sql = @"SELECT CardstackId FROM Cardstack WHERE CardstackId = @CardstackId";
+        using (var connection = new SqlConnection(connectionStr))
+        {
+            var getId = connection.ExecuteScalar<int>(sql, new { CardstackId = cardStackId });
+            return new CardStack { CardstackId = getId };
         }
     }
 
@@ -44,8 +55,7 @@ public class StackDatabaseManager
         using (var connection = new SqlConnection(connectionStr))
         {
             var sql = $@"DELETE FROM Cardstack WHERE CardstackId = {cardStack.CardstackId} ";
-            if (cardStack.CardstackId == 0) Console.WriteLine("stack number does not exist");
-            connection.Execute(sql);
+            connection.Execute(sql, cardStack);
         }
     }
 }

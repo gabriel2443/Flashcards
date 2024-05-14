@@ -11,10 +11,21 @@ namespace Flashcards.Database
 
         internal void AddFlashard(FlashCards flashCard)
         {
-            var sql = $"INSERT INTO Flashcards VALUES(@Question, @Answer, @StackId)";
+            var sql = $"INSERT INTO Flashcards VALUES(@Question, @Answer, @CardstackId)";
             using (var connection = new SqlConnection(connectionStr))
             {
                 connection.Execute(sql, flashCard);
+            }
+        }
+
+        internal List<FlashCardsDTO> ReadFlahcards()
+        {
+            var sql = $"SELECT * FROM Flashcards";
+
+            using (var connection = new SqlConnection(connectionStr))
+            {
+                var flashcards = connection.Query<FlashCardsDTO>(sql).ToList();
+                return flashcards;
             }
         }
     }

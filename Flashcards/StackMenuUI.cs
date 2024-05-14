@@ -51,7 +51,7 @@ namespace Flashcards
 
         private void AddStack()
         {
-            var cardStack = new Models.CardstackDTO();
+            var cardStack = new Models.CardStack();
             Console.WriteLine("Please enter the stack name which you want to add");
 
             var stack = Console.ReadLine();
@@ -60,7 +60,7 @@ namespace Flashcards
             stackDatabaseManager.InsertStack(cardStack);
         }
 
-        private void ReadStack()
+        internal void ReadStack()
         {
             Console.Clear();
             var cardStacks = stackDatabaseManager.GetStacks();
