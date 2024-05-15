@@ -18,9 +18,9 @@ namespace Flashcards.Database
             }
         }
 
-        internal List<FlashCardsDTO> ReadFlahcards()
+        internal List<FlashCardsDTO> ReadFlahcards(CardStack stackId)
         {
-            var sql = $"SELECT * FROM Flashcards";
+            var sql = $"SELECT * FROM Flashcards WHERE StackId = {stackId} ";
 
             using (var connection = new SqlConnection(connectionStr))
             {

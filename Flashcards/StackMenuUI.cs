@@ -1,5 +1,6 @@
 ﻿using Flashcards.Database;
 using Flashcards.Models;
+using Spectre.Console;
 
 namespace Flashcards
 {
@@ -13,37 +14,38 @@ namespace Flashcards
 
             while (isRunning)
             {
-                Console.WriteLine("\n\nSTACKS MENU");
-                Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("\nType 0 to Close Application.");
-                Console.WriteLine("Type 1 Add a stack");
-                Console.WriteLine("Type 2 to view stacks");
-                Console.WriteLine("Type 3 to delete stacks");
-                Console.WriteLine("Type 4 to update stacks");
+                var select = new SelectionPrompt<string>();
+                select.Title("STACKS MENU");
 
-                var userInput = Console.ReadLine();
+                select.AddChoice("Close Application");
+                select.AddChoice("Add a stack");
+                select.AddChoice("View stacks");
+                select.AddChoice("Delete stacks");
+                select.AddChoice("Update stacks");
+
+                var userInput = AnsiConsole.Prompt(select);
 
                 switch (userInput)
                 {
-                    case "0":
+                    case "Close Application":
                         isRunning = false;
                         Environment.Exit(0);
                         break;
 
-                    case "1":
+                    case "Add a stack":
                         AddStack();
                         break;
 
-                    case "2":
+                    case "View stacks":
                         ReadStack();
                         break;
 
-                    case "3":
+                    case "Delete stacks":
                         DeleteStack();
                         break;
 
-                    case "4":
-                        UpdateStack();
+                    case "Update stacks":
+                        EditStack();
                         break;
                 }
             }
@@ -52,9 +54,10 @@ namespace Flashcards
         private void AddStack()
         {
             var cardStack = new Models.CardStack();
-            Console.WriteLine("Please enter the stack name which you want to add");
+            /*    Console.WriteLine("Please enter the stack name which you want to add");*/
 
-            var stack = Console.ReadLine();
+            var stack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the name of the stack you want to add or type 0 to go back to main menu").Validate(stackName => !StackExists(stackName.Trim()), "This stack already exists"));
+            if (stack == "0") StackMenu();
             cardStack.CardstackName = stack;
 
             stackDatabaseManager.InsertStack(cardStack);
@@ -70,7 +73,10 @@ namespace Flashcards
                 Console.WriteLine("List of stacks:");
                 foreach (var card in cardStacks)
                 {
-                    Console.WriteLine($"Stack Number: {card.CardstackId}, Stack Name: {card.CardstackName}");
+                    AnsiConsole.Write(new Rows(
+             new Text($"{card.CardstackName}")
+
+         ));
                 }
             }
             else
@@ -79,52 +85,46 @@ namespace Flashcards
             }
         }
 
-        private void UpdateStack()
+        internal void EditStack()
         {
-            var cardStack = new CardStack();
-            ReadStack();
+            var stacks = stackDatabaseManager.GetStacks();
+            var select = new SelectionPrompt<CardStack>();
+            select.Title("Select a stack you want to edit");
+            select.AddChoices(stacks);
+            select.AddChoice(new CardStack { CardstackName = "Go back to menu" });
+            select.UseConverter(stackName => stackName.CardstackName);
+            var selectedStack = AnsiConsole.Prompt(select);
 
-            Console.WriteLine("Please enter the number of the stack you want to edit");
-            var inputId = Console.ReadLine();
+            var stackName = AnsiConsole.Prompt(new TextPrompt<string>($"Please enter the updated name").Validate(name => !StackExists(name), "This stack already exists"));
 
-            while (!Int32.TryParse(inputId, out _) || Convert.ToInt32(inputId) < 0)
-            {
-                Console.WriteLine("Please enter a valid number");
-
-                inputId = Console.ReadLine();
-            }
-
-            cardStack.CardstackId = Convert.ToInt32(inputId);
-
-            Console.WriteLine("Please enter the updated name for the stack");
-            var inputName = Console.ReadLine();
-            while (string.IsNullOrEmpty(inputName))
-            {
-                Console.WriteLine("Please enter a valid name");
-                inputName = Console.ReadLine();
-            }
-            cardStack.CardstackName = inputName;
-
-            stackDatabaseManager.UpdateStack(cardStack);
+            stackDatabaseManager.UpdateStack(selectedStack, stackName);
         }
 
         private void DeleteStack()
         {
-            ReadStack();
-            var cardStacks = new CardStack();
+            var stacks = stackDatabaseManager.GetStacks();
+            var select = new SelectionPrompt<CardStack>();
+            select.Title("Select which stack you want to delete");
+            select.AddChoices(stacks);
+            select.AddChoice(new CardStack { CardstackName = "Return to stack menu" });
+            select.UseConverter(stackName => stackName.CardstackName);
 
-            Console.WriteLine("Please enter the number of the stack you want to delete");
-            var input = Console.ReadLine();
+            var stackSelected = AnsiConsole.Prompt(select);
 
-            while (!Int32.TryParse(input, out _) || Convert.ToInt32(input) < 0)
+            stackDatabaseManager.DeleteStack(stackSelected);
+        }
+
+        internal bool StackExists(string stackName)
+        {
+            var stacks = stackDatabaseManager.GetStacks();
+
+            var sameStack = false;
+            foreach (var stack in stacks)
             {
-                Console.WriteLine("Please enter a valid number");
-                input = Console.ReadLine();
+                if (stackName.ToLower() == stack.CardstackName.ToLower()) sameStack = true;
             }
 
-            cardStacks.CardstackId = Convert.ToInt32(input);
-
-            stackDatabaseManager.DeleteStack(cardStacks);
+            return sameStack;
         }
     }
 }

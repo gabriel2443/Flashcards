@@ -1,4 +1,6 @@
-﻿namespace Flashcards
+﻿using Spectre.Console;
+
+namespace Flashcards
 {
     internal class MainMenuUI
     {
@@ -11,24 +13,24 @@
 
             while (isRunning)
             {
-                Console.WriteLine("\n\nMAIN MENU");
-                Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("\nType 0 to Close Application.");
-                Console.WriteLine("Type 1 to Manage Stacks");
-                Console.WriteLine("Type 2 to Manage Flashcards");
-                var userInput = Console.ReadLine();
+                var select = new SelectionPrompt<string>();
+                select.Title("What would you like to do");
+                select.AddChoice("Close Application");
+                select.AddChoice("Manage Stacks");
+                select.AddChoice("Manage Flashcards");
+                var userInput = AnsiConsole.Prompt(select);
 
                 switch (userInput)
                 {
-                    case "0":
+                    case "Close Application":
                         isRunning = false;
                         break;
 
-                    case "1":
+                    case "Manage Stacks":
                         stackMenu.StackMenu();
                         break;
 
-                    case "2":
+                    case "Manage Flashcards":
                         flashcardsMenu.FlashCardsMenu();
                         break;
                 }

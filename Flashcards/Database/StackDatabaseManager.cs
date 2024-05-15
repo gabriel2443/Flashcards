@@ -40,11 +40,11 @@ public class StackDatabaseManager
         }
     }
 
-    internal void UpdateStack(CardStack cardStack)
+    internal void UpdateStack(CardStack cardStack, string cardStackName)
     {
         using (var connection = new SqlConnection(connectionStr))
         {
-            var sql = $@"UPDATE Cardstack SET CardstackName = '{cardStack.CardstackName}' WHERE CardstackId = {cardStack.CardstackId}";
+            var sql = $@"UPDATE Cardstack SET CardstackName = '{cardStackName}' WHERE CardstackId = {cardStack.CardstackId}";
 
             connection.Execute(sql, cardStack);
         }

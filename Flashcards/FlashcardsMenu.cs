@@ -10,26 +10,36 @@ namespace Flashcards
 
         internal void FlashCardsMenu()
         {
+            var mainMenu = new MainMenuUI();
+            var stackMenu = new StackMenuUI();
             bool isRunning = true;
             while (isRunning)
             {
                 Console.WriteLine("\n\nSTACKS MENU");
                 Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("\nType 0 to Close Application.");
-                Console.WriteLine("Type 1 Add a flashcard");
-                Console.WriteLine("Type 2 to view stacks");
+                Console.WriteLine("\nType 0 to go back to main menu");
+                Console.WriteLine("Type 1 View stacks");
+                Console.WriteLine("Type 2 to view flashcards");
                 Console.WriteLine("Type 3 to delete stacks");
                 Console.WriteLine("Type 4 to update stacks");
                 var input = Console.ReadLine();
                 switch (input)
                 {
+                    case "0":
+                        mainMenu.MainMenu();
+                        break;
+
                     case "1":
-                        AddFlashcard();
+                        stackMenu.EditStack();
                         break;
 
                     case "2":
-                        GetFlashcards();
+                        AddFlashcard();
                         break;
+                        /*
+                                            case "3":
+                                                GetFlashcards();
+                                                break;*/
                 }
             }
         }
@@ -63,21 +73,23 @@ namespace Flashcards
             flashcardDatabaseManager.AddFlashard(flashcards);
         }
 
-        internal void GetFlashcards()
-        {
-            Console.Clear();
-
-            var flashcards = flashcardDatabaseManager.ReadFlahcards();
-
-            if (flashcards.Any())
-            {
-                Console.WriteLine("List of stacks:");
-                foreach (var flashcard in flashcards)
+        /*
+                internal void GetFlashcards()
                 {
-                    Console.WriteLine($"{flashcard.FlashcardId}|| Question:{flashcard.Question} | Answer:{flashcard.Answer} stack: ");
+                    Console.Clear();
+
+                    var flashcards = flashcardDatabaseManager.ReadFlahcards();
+
+                    if (flashcards.Any())
+                    {
+                        Console.WriteLine("List of stacks:");
+                        foreach (var flashcard in flashcards)
+                        {
+                            Console.WriteLine($"{flashcard.FlashcardId}|| Question:{flashcard.Question} | Answer:{flashcard.Answer} ");
+                        }
+                    }
+                    else { Console.WriteLine("No flashcards found"); };
                 }
-            }
-            else { Console.WriteLine("No flashcards found"); };
-        }
+            }*/
     }
 }
