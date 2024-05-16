@@ -30,12 +30,12 @@ public class StackDatabaseManager
         }
     }
 
-    internal CardStack GetStackById(int cardStackId)
+    internal CardStack GetStackById()
     {
-        var sql = @"SELECT CardstackId FROM Cardstack WHERE CardstackId = @CardstackId";
+        var sql = @"SELECT CardstackId FROM Cardstack";
         using (var connection = new SqlConnection(connectionStr))
         {
-            var getId = connection.ExecuteScalar<int>(sql, new { CardstackId = cardStackId });
+            var getId = connection.ExecuteScalar<int>(sql);
             return new CardStack { CardstackId = getId };
         }
     }

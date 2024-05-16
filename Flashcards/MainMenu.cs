@@ -9,6 +9,7 @@ namespace Flashcards
 
         internal void MainMenu()
         {
+            Console.Clear();
             var isRunning = true;
 
             while (isRunning)
@@ -24,6 +25,7 @@ namespace Flashcards
                 {
                     case "Close Application":
                         isRunning = false;
+                        Environment.Exit(0);
                         break;
 
                     case "Manage Stacks":
@@ -31,7 +33,7 @@ namespace Flashcards
                         break;
 
                     case "Manage Flashcards":
-                        flashcardsMenu.FlashCardsMenu();
+                        flashcardsMenu.StackSelection();
                         break;
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using Flashcards.Database;
 using Flashcards.Models;
+using Spectre.Console;
 
 namespace Flashcards
 {
@@ -7,89 +8,96 @@ namespace Flashcards
     {
         private FlashcardDatabaseManager flashcardDatabaseManager = new FlashcardDatabaseManager();
         private StackDatabaseManager stackDatabaseManager = new StackDatabaseManager();
+        private CardStack stack = new CardStack();
 
-        internal void FlashCardsMenu()
+        internal void FlashCardsMenu(CardStack stack)
+
         {
             var mainMenu = new MainMenuUI();
-            var stackMenu = new StackMenuUI();
             bool isRunning = true;
             while (isRunning)
             {
-                Console.WriteLine("\n\nSTACKS MENU");
-                Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("\nType 0 to go back to main menu");
-                Console.WriteLine("Type 1 View stacks");
-                Console.WriteLine("Type 2 to view flashcards");
-                Console.WriteLine("Type 3 to delete stacks");
-                Console.WriteLine("Type 4 to update stacks");
-                var input = Console.ReadLine();
+                var select = new SelectionPrompt<string>();
+                select.Title("\nFLASHCARDS MENU\n\n");
+                select.AddChoice("Go back to main menu");
+                select.AddChoice("View flashcards");
+                select.AddChoice("Add flashcard");
+                select.AddChoice("Update a flash card");
+                select.AddChoice("Delete a flashcard");
+                var input = AnsiConsole.Prompt(select);
                 switch (input)
                 {
-                    case "0":
+                    case "Go back to main menu":
                         mainMenu.MainMenu();
                         break;
 
-                    case "1":
-                        stackMenu.EditStack();
+                    case "Add flashcard":
+                        AddFlashCard();
                         break;
 
-                    case "2":
-                        AddFlashcard();
+                    case "View flashcards":
+                        ViewFlashcards(stack);
                         break;
-                        /*
-                                            case "3":
-                                                GetFlashcards();
-                                                break;*/
                 }
             }
         }
 
-        internal void AddFlashcard()
+        internal void StackSelection()
         {
-            var getStacks = new StackDatabaseManager();
-            var stacksMenu = new StackMenuUI();
-            stacksMenu.ReadStack();
+            var flashcardsMenu = new FlashcardsMenuUI();
+            var cardStacks = stackDatabaseManager.GetStacks();
 
-            Console.WriteLine("Please select the number of the stack you want to add a flashcard");
-            var stackNum = ValidateNumber.ValidateNum("Invalid input");
+            var select = new SelectionPrompt<CardStack>();
+            select.Title("Select a stack");
+            select.AddChoices(cardStacks);
+            select.AddChoice(new CardStack { CardstackId = 0, CardstackName = "Go back to menu" });
+            select.UseConverter(stackName => stackName.CardstackName);
 
-            var stackId = getStacks.GetStackById(Convert.ToInt32(stackNum));
-            while (stackId == null || stackId.CardstackId != Convert.ToInt32(stackNum))
+            var selectedCardStack = AnsiConsole.Prompt(select);
+            flashcardsMenu.FlashCardsMenu(selectedCardStack);
+            flashcardsMenu.ViewFlashcards(selectedCardStack);
+        }
+
+        internal void AddFlashCard()
+        {
+            var stacks = new StackDatabaseManager();
+            var stackId = stacks.GetStackById();
+
+            if (stackId.CardstackId == 0)
             {
-                Console.WriteLine("stack number does not exist");
-                stackNum = Console.ReadLine();
-                stackId = getStacks.GetStackById(Convert.ToInt32(stackNum));
+                Console.WriteLine("No stacks found");
+                return;
             }
-            var flashcards = new FlashCards();
-            Console.WriteLine("Please enter the front of the card");
-            var inputFront = Console.ReadLine();
-            flashcards.Question = inputFront;
-            Console.WriteLine("Please enter the back of the card");
-            var inputBack = Console.ReadLine();
-            flashcards.Answer = inputBack;
 
-            flashcards.CardstackId = stackId.CardstackId;
+            var flashcards = new FlashCards();
+            var inputFront = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the front of the card"));
+            var inputBack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the back of the card"));
+
+            flashcards.CardstackId = Convert.ToInt32(stackId.CardstackId);
+
+            flashcards.Question = inputFront;
+            flashcards.Answer = inputBack;
 
             flashcardDatabaseManager.AddFlashard(flashcards);
         }
 
-        /*
-                internal void GetFlashcards()
+        internal void ViewFlashcards(CardStack stack)
+        {
+            Console.Clear();
+            var getFlashcards = flashcardDatabaseManager.ReadFlahcards(stack);
+
+            int id = 1;
+
+            if (getFlashcards.Count() == 0) Console.WriteLine("No flashcards found");
+            else
+            {
+                Console.WriteLine("List of flashcards:");
+                foreach (var flashcard in getFlashcards)
                 {
-                    Console.Clear();
-
-                    var flashcards = flashcardDatabaseManager.ReadFlahcards();
-
-                    if (flashcards.Any())
-                    {
-                        Console.WriteLine("List of stacks:");
-                        foreach (var flashcard in flashcards)
-                        {
-                            Console.WriteLine($"{flashcard.FlashcardId}|| Question:{flashcard.Question} | Answer:{flashcard.Answer} ");
-                        }
-                    }
-                    else { Console.WriteLine("No flashcards found"); };
+                    AnsiConsole.Write(new Rows(
+                    new Text($"{id++}\t {flashcard.Question} \t {flashcard.Answer}")));
                 }
-            }*/
+            }
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Flashcards
 
         internal void StackMenu()
         {
+            var mainMenu = new MainMenuUI();
             bool isRunning = true;
 
             while (isRunning)
@@ -17,7 +18,7 @@ namespace Flashcards
                 var select = new SelectionPrompt<string>();
                 select.Title("STACKS MENU");
 
-                select.AddChoice("Close Application");
+                select.AddChoice("Go back to main menu");
                 select.AddChoice("Add a stack");
                 select.AddChoice("View stacks");
                 select.AddChoice("Delete stacks");
@@ -27,9 +28,8 @@ namespace Flashcards
 
                 switch (userInput)
                 {
-                    case "Close Application":
-                        isRunning = false;
-                        Environment.Exit(0);
+                    case "Go back to main menu":
+                        mainMenu.MainMenu();
                         break;
 
                     case "Add a stack":
@@ -118,13 +118,13 @@ namespace Flashcards
         {
             var stacks = stackDatabaseManager.GetStacks();
 
-            var sameStack = false;
+            var isSameStack = false;
             foreach (var stack in stacks)
             {
-                if (stackName.ToLower() == stack.CardstackName.ToLower()) sameStack = true;
+                if (stackName.ToLower() == stack.CardstackName.ToLower()) isSameStack = true;
             }
 
-            return sameStack;
+            return isSameStack;
         }
     }
 }
