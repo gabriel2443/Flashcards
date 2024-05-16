@@ -1,5 +1,5 @@
-﻿using Flashcards;
-using Flashcards.Database;
+﻿using Flashcards.Database;
+using Flashcards.Menus;
 
 var databaseCreation = new DatabaseCreation();
 var mainMenu = new MainMenuUI();

@@ -1,6 +1,7 @@
-﻿using Spectre.Console;
+﻿using Flashcards.FlashcardsMenu;
+using Spectre.Console;
 
-namespace Flashcards
+namespace Flashcards.Menus
 {
     internal class MainMenuUI
     {

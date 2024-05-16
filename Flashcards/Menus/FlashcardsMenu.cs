@@ -2,7 +2,7 @@
 using Flashcards.Models;
 using Spectre.Console;
 
-namespace Flashcards
+namespace Flashcards.FlashcardsMenu
 {
     internal class FlashcardsMenuUI
     {

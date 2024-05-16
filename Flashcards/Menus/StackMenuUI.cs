@@ -2,7 +2,7 @@
 using Flashcards.Models;
 using Spectre.Console;
 
-namespace Flashcards
+namespace Flashcards.Menus
 {
     internal class StackMenuUI
     {
@@ -53,7 +53,7 @@ namespace Flashcards
 
         private void AddStack()
         {
-            var cardStack = new Models.CardStack();
+            var cardStack = new CardStack();
             /*    Console.WriteLine("Please enter the stack name which you want to add");*/
 
             var stack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the name of the stack you want to add or type 0 to go back to main menu").Validate(stackName => !StackExists(stackName.Trim()), "This stack already exists"));
