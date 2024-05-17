@@ -28,5 +28,23 @@ namespace Flashcards.Database
                 return flashcards;
             }
         }
+
+        internal void UpdateFlashcards(FlashCards flashCard, string flashcardQuestion, string flashcardAnswer)
+        {
+            var sql = "UPDATE Flashcards SET Question = @Question, Answer = @Answer WHERE FlashcardId = @FlashcardId";
+            using (var connection = new SqlConnection(connectionStr))
+            {
+                connection.Execute(sql, new { Question = flashcardQuestion, Answer = flashcardAnswer, FlashcardId = flashCard.FlashcardId });
+            }
+        }
+
+        internal void DeleteFlashcard(FlashCards flashCards)
+        {
+            var sql = "DELETE FROM Flashcards WHERE FlashcardId = @FlashcardId";
+            using (var connection = new SqlConnection(connectionStr))
+            {
+                connection.Execute(sql, new { FlashcardId = flashCards.FlashcardId });
+            }
+        }
     }
 }

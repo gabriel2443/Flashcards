@@ -1,4 +1,5 @@
 ﻿using Flashcards.Database;
+using Flashcards.Helpers;
 using Flashcards.Models;
 using Spectre.Console;
 
@@ -54,9 +55,8 @@ namespace Flashcards.Menus
         private void AddStack()
         {
             var cardStack = new CardStack();
-            /*    Console.WriteLine("Please enter the stack name which you want to add");*/
 
-            var stack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the name of the stack you want to add or type 0 to go back to main menu").Validate(stackName => !StackExists(stackName.Trim()), "This stack already exists"));
+            var stack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the name of the stack you want to add or type 0 to go back to main menu").Validate(stackName => !ValidateStack.StackExists(stackName.Trim()), "This stack already exists"));
             if (stack == "0") StackMenu();
             cardStack.CardstackName = stack;
 
@@ -95,7 +95,7 @@ namespace Flashcards.Menus
             select.UseConverter(stackName => stackName.CardstackName);
             var selectedStack = AnsiConsole.Prompt(select);
 
-            var stackName = AnsiConsole.Prompt(new TextPrompt<string>($"Please enter the updated name").Validate(name => !StackExists(name), "This stack already exists"));
+            var stackName = AnsiConsole.Prompt(new TextPrompt<string>($"Please enter the updated name").Validate(name => !ValidateStack.StackExists(name), "This stack already exists"));
 
             stackDatabaseManager.UpdateStack(selectedStack, stackName);
         }
@@ -112,19 +112,6 @@ namespace Flashcards.Menus
             var stackSelected = AnsiConsole.Prompt(select);
 
             stackDatabaseManager.DeleteStack(stackSelected);
-        }
-
-        internal bool StackExists(string stackName)
-        {
-            var stacks = stackDatabaseManager.GetStacks();
-
-            var isSameStack = false;
-            foreach (var stack in stacks)
-            {
-                if (stackName.ToLower() == stack.CardstackName.ToLower()) isSameStack = true;
-            }
-
-            return isSameStack;
         }
     }
 }

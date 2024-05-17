@@ -1,4 +1,5 @@
 ﻿using Flashcards.Database;
+using Flashcards.Menus;
 using Flashcards.Models;
 using Spectre.Console;
 
@@ -38,13 +39,20 @@ namespace Flashcards.FlashcardsMenu
                     case "View flashcards":
                         ViewFlashcards(stack);
                         break;
+
+                    case "Update a flash card":
+                        UpdateFlashcards(stack);
+                        break;
+
+                    case "Delete a flashcard":
+                        DeleteFlashcard(stack);
+                        break;
                 }
             }
         }
 
         internal void StackSelection()
         {
-            var flashcardsMenu = new FlashcardsMenuUI();
             var cardStacks = stackDatabaseManager.GetStacks();
 
             var select = new SelectionPrompt<CardStack>();
@@ -54,12 +62,15 @@ namespace Flashcards.FlashcardsMenu
             select.UseConverter(stackName => stackName.CardstackName);
 
             var selectedCardStack = AnsiConsole.Prompt(select);
-            flashcardsMenu.FlashCardsMenu(selectedCardStack);
-            flashcardsMenu.ViewFlashcards(selectedCardStack);
+            FlashCardsMenu(selectedCardStack);
+            ViewFlashcards(selectedCardStack);
+            UpdateFlashcards(selectedCardStack);
+            DeleteFlashcard(selectedCardStack);
         }
 
         internal void AddFlashCard()
         {
+            Console.Clear();
             var stacks = new StackDatabaseManager();
             var stackId = stacks.GetStackById();
 
@@ -75,8 +86,8 @@ namespace Flashcards.FlashcardsMenu
 
             flashcards.CardstackId = Convert.ToInt32(stackId.CardstackId);
 
-            flashcards.Question = inputFront;
             flashcards.Answer = inputBack;
+            flashcards.Question = inputFront;
 
             flashcardDatabaseManager.AddFlashard(flashcards);
         }
@@ -98,6 +109,33 @@ namespace Flashcards.FlashcardsMenu
                     new Text($"{id++}\t {flashcard.Question} \t {flashcard.Answer}")));
                 }
             }
+        }
+
+        internal void UpdateFlashcards(CardStack stack)
+        {
+            var getFlashcards = flashcardDatabaseManager.ReadFlahcards(stack);
+
+            var select = new SelectionPrompt<FlashCards>();
+            select.AddChoices(getFlashcards);
+            select.UseConverter(flashcardName => $"{flashcardName.Question} {flashcardName.Answer}");
+            var selectedFlashcard = AnsiConsole.Prompt(select);
+
+            var inputFront = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the updated front of the card"));
+
+            var inputBack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the updated back of the card"));
+
+            flashcardDatabaseManager.UpdateFlashcards(selectedFlashcard, inputFront, inputBack);
+        }
+
+        internal void DeleteFlashcard(CardStack stack)
+        {
+            var getFlashcards = flashcardDatabaseManager.ReadFlahcards(stack);
+
+            var select = new SelectionPrompt<FlashCards>();
+            select.AddChoices(getFlashcards);
+            select.UseConverter(flashcardName => $"{flashcardName.Question} {flashcardName.Answer}");
+            var selectedFlashcard = AnsiConsole.Prompt(select);
+            flashcardDatabaseManager.DeleteFlashcard(selectedFlashcard);
         }
     }
 }
