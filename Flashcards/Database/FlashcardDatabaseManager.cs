@@ -18,6 +18,17 @@ namespace Flashcards.Database
             }
         }
 
+        internal List<FlashCardsDTO> ReadFlashcardsDTO(CardStack stack)
+        {
+            var sql = $"SELECT * FROM Flashcards WHERE StackId = {stack.CardstackId}";
+
+            using (var connection = new SqlConnection(connectionStr))
+            {
+                var flashcards = connection.Query<FlashCardsDTO>(sql).ToList();
+                return flashcards;
+            }
+        }
+
         internal List<FlashCards> ReadFlahcards(CardStack stack)
         {
             var sql = $"SELECT * FROM Flashcards WHERE StackId = {stack.CardstackId}";

@@ -1,4 +1,5 @@
 ﻿using Flashcards.Database;
+using Flashcards.Helpers;
 using Flashcards.Menus;
 using Flashcards.Models;
 using Spectre.Console;
@@ -33,7 +34,7 @@ namespace Flashcards.FlashcardsMenu
                         break;
 
                     case "Add flashcard":
-                        AddFlashCard();
+                        AddFlashCard(stack);
                         break;
 
                     case "View flashcards":
@@ -66,25 +67,23 @@ namespace Flashcards.FlashcardsMenu
             ViewFlashcards(selectedCardStack);
             UpdateFlashcards(selectedCardStack);
             DeleteFlashcard(selectedCardStack);
+            AddFlashCard(selectedCardStack);
         }
 
-        internal void AddFlashCard()
+        internal void AddFlashCard(CardStack stack)
         {
             Console.Clear();
-            var stacks = new StackDatabaseManager();
-            var stackId = stacks.GetStackById();
+            var flashcards = new FlashCards();
 
-            if (stackId.CardstackId == 0)
+            if (stack.CardstackId == 0)
             {
-                Console.WriteLine("No stacks found");
+                Console.WriteLine($"No stacks found");
                 return;
             }
+            flashcards.CardstackId = Convert.ToInt32(stack.CardstackId);
 
-            var flashcards = new FlashCards();
-            var inputFront = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the front of the card"));
-            var inputBack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the back of the card"));
-
-            flashcards.CardstackId = Convert.ToInt32(stackId.CardstackId);
+            var inputFront = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the front of the card").Validate(input => !ValidateFlashcardsStacks.InputFront(input), "This question exists"));
+            var inputBack = AnsiConsole.Prompt(new TextPrompt<string>("Please enter the back of the card").Validate(input => !ValidateFlashcardsStacks.InputBack(input), "This question exists"));
 
             flashcards.Answer = inputBack;
             flashcards.Question = inputFront;
@@ -95,7 +94,7 @@ namespace Flashcards.FlashcardsMenu
         internal void ViewFlashcards(CardStack stack)
         {
             Console.Clear();
-            var getFlashcards = flashcardDatabaseManager.ReadFlahcards(stack);
+            var getFlashcards = flashcardDatabaseManager.ReadFlashcardsDTO(stack);
 
             int id = 1;
 

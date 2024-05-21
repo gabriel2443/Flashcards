@@ -32,6 +32,18 @@ namespace Flashcards.Database
                                    ON UPDATE CASCADE
                                    )";
                 connection.Execute(createFlashcards);
+
+                var createStudySession = @"IF NOT EXISTS(SELECT * FROM sys.tables WHERE name = 'StudySession')
+                                      CREATE TABLE StudySession(
+                                      DateStart DATETIME NOT NULL,
+                                      DateEnd DATETIME NOT NULL,
+                                      SCORE INT NOT NULL,
+                                      StackId INT NOT NULL,
+                                      CONSTRAINT  fk_studysession FOREIGN KEY(StackId)
+                                      REFERENCES Cardstack(CardstackId)
+                                      ON DELETE CASCADE
+                                      ON UPDATE CASCADE)";
+                connection.Execute(createStudySession);
             }
         }
     }
