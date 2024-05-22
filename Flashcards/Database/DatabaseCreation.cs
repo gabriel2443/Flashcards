@@ -37,7 +37,7 @@ namespace Flashcards.Database
                                       CREATE TABLE StudySession(
                                       DateStart DATETIME NOT NULL,
                                       DateEnd DATETIME NOT NULL,
-                                      SCORE INT NOT NULL,
+                                      Score INT NOT NULL,
                                       StackId INT NOT NULL,
                                       CONSTRAINT  fk_studysession FOREIGN KEY(StackId)
                                       REFERENCES Cardstack(CardstackId)
