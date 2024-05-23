@@ -17,11 +17,11 @@ internal class MainMenuUI
         while (isRunning)
         {
             var select = new SelectionPrompt<string>();
-            select.Title("What would you like to do");
+            select.Title("  [bold]What would you like to do?[/]\n");
             select.AddChoice("Close Application");
             select.AddChoice("Manage Stacks");
             select.AddChoice("Manage Flashcards");
-            select.AddChoice("Start a Study Session");
+            select.AddChoice("Manage Study Sessions");
             var userInput = AnsiConsole.Prompt(select);
 
             switch (userInput)
@@ -39,7 +39,7 @@ internal class MainMenuUI
                     flashcardsMenu.StackSelection();
                     break;
 
-                case "Start a Study Session":
+                case "Manage Study Sessions":
                     sessionMenu.StudySessionMenu();
                     break;
             }

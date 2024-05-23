@@ -11,11 +11,10 @@ public class StackDatabaseManager
 
     internal void InsertStack(CardStack stack)
     {
+        var sql = $@"INSERT INTO Cardstack (CardstackName) VALUES (@CardstackName)";
         using (var connection = new SqlConnection(connectionStr))
         {
-            var insertStack = $@"INSERT INTO Cardstack (CardstackName) VALUES ('{stack.CardstackName}')";
-
-            connection.Execute(insertStack);
+            connection.Execute(sql, stack);
         }
     }
 

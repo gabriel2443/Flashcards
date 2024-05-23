@@ -11,7 +11,7 @@ internal class StudySessionDatabase
 
     internal void AddStudySession(StudySession studySession)
     {
-        var sql = @"INSERT INTO StudySession VALUES(@DateStart, @DateEnd, @Score, @StackId)";
+        var sql = @"INSERT INTO StudySession VALUES(@DateStart, @DateEnd, @Score, @QuestionCounter, @StackId)";
         using (var connection = new SqlConnection(connectionStr))
         {
             connection.Execute(sql, studySession);
